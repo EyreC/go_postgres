@@ -1,0 +1,9 @@
+POST http://localhost:8080/db/create
+Content-Type: application/json
+
+{
+  "name": "testUsers",
+  "columns": [
+    {"name": "id", "type": "serial", "nullable": false}
+  ]
+}
