@@ -49,7 +49,7 @@ type UserPayments struct {
 	Payments []UserPayment `json:"payments"`
 }
 
-var connectionString string = os.Getenv("DATABSE_URL") // "postgres://gostgres_admin:123@localhost:5432/gostgres"
+var connectionString string = os.Getenv("DATABASE_URL") // "postgres://gostgres_admin:123@localhost:5432/gostgres"
 
 var pool *pgxpool.Pool // initialise once at startup
 func create(payload CreateTablePayload) error {
