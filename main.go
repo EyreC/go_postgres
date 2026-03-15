@@ -241,6 +241,25 @@ func getUserPaymentsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+type CreateUserPayload struct {
+	Username string
+}
+
+func createUser(ctx context.Context, createUserPayload CreateUserPayload) error {
+	_, err := pool.Exec(ctx, "insert into users (username) values ($1)", createUserPayload.Username)
+	return err
+}
+func createUserHandler(w http.ResponseWriter, r *http.Request) {
+	var createUserPayload CreateUserPayload
+	err := json.NewDecoder(r.Body).Decode(&createUserPayload)
+	if err != nil {
+		http.Error(w, "Unable to decode json payload", http.StatusBadRequest)
+		slog.Error("Unable to decode json payload", "error", err)
+		return
+	}
+	createUser(r.Context(), createUserPayload)
+}
 func createServer() *http.Server {
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /db/create", createHandler)
@@ -248,6 +267,7 @@ func createServer() *http.Server {
 	mux.HandleFunc("GET /hello", helloHandler)
 	mux.HandleFunc("GET /users/{id}", getUserHandler)
 	mux.HandleFunc("GET /user_payments/{id}", getUserPaymentsHandler)
+	mux.HandleFunc("POST /users/create", createUserHandler)
 	port := os.Getenv("PORT")
 	address := ":8080"
 	if len(port) > 0 {
